@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import appwriteService from '../appwrite/config';
+import authService from '../appwrite/auth'; // Import authService
+import service from '../appwrite/config'; // Import service
 import { Container, PostCard } from '../components';
 
 function Home() {
@@ -8,22 +9,28 @@ function Home() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
-        // Check if the user is logged in
-        appwriteService.isLoggedIn().then((loggedIn) => {
-            setIsLoggedIn(loggedIn);
-            if (loggedIn) {
-                // If logged in, fetch posts
-                appwriteService.getPosts().then((posts) => {
+        async function fetchData() {
+            try {
+                // Check if the user is logged in using authService
+                const user = await authService.getCurrentUser();
+                setIsLoggedIn(user !== null); // Set isLoggedIn based on whether user exists
+                
+                if (user !== null) {
+                    // If logged in, fetch posts using service
+                    const posts = await service.getPosts();
                     if (posts) {
                         setPosts(posts.documents);
-                        setLoading(false);
                     }
-                });
-            } else {
-                // If not logged in, no need to fetch posts
+                }
+
+                setLoading(false);
+            } catch (error) {
+                console.error('Error:', error);
                 setLoading(false);
             }
-        });
+        }
+
+        fetchData();
     }, []);
 
     if (loading) {
