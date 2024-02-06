@@ -1,7 +1,27 @@
+/* index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+html {
+    scroll-behavior: smooth;
+}
 
+/* Custom scrollbar styles */
+/* For WebKit-based browsers like Chrome and Safari */
+::-webkit-scrollbar {
+  width: 8px; /* width of the scrollbar */
+}
 
+::-webkit-scrollbar-track {
+  background: #123572; 
+}
 
+::-webkit-scrollbar-thumb {
+  background: #d48e0a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #123572;
+}
