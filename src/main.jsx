@@ -12,7 +12,7 @@ import EditPost from './pages/EditPost.jsx'
 import Post from './pages/Post.jsx'
 import AddPost from './pages/AddPost.jsx'
 import Home from './pages/Home.jsx'
-import { AuthLayout } from './Components/index.js'
+import { AuthLayout } from './components/index.js'
 
 const router = createBrowserRouter([
   {
