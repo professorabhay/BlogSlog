@@ -1,97 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import authService from '../appwrite/auth'; // Import authService
-import service from '../appwrite/config'; // Import service
-import { Container, PostCard } from '../components';
+import React from 'react';
+import { Container, Button } from '../Components';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { cn } from "@/utils/cn";
+"use client";
+import { TextGenerateEffect } from "../Components/ui/text-generate-effect";
+
+const welcomeMessage = `Uncover your next captivating read, narrate your tale, and connect with the world.`;
 
 function Home() {
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const status = useSelector(state => state.auth.status);
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                // Check if the user is logged in using authService
-                const user = await authService.getCurrentUser();
-                setIsLoggedIn(user !== null); // Set isLoggedIn based on whether user exists
-                
-                if (user !== null) {
-                    // If logged in, fetch posts using service
-                    const posts = await service.getPosts();
-                    if (posts) {
-                        setPosts(posts.documents);
-                    }
-                }
-
-                setLoading(false);
-            } catch (error) {
-                console.error('Error:', error);
-                setLoading(false);
-            }
+    const navigate = useNavigate();
+    const navigateHome = () => {
+        if (status) {
+            navigate('/all-posts');
+        } else {
+            navigate('/login');
         }
-
-        fetchData();
-    }, []);
-
-    if (loading) {
-        return (
-            <div className="w-full py-8 mt-4 text-center min-h-screen">
-                <Container>
-                    <div className="flex flex-wrap">
-                        <div className="p-2 w-full h-full">
-                            <h1 className="text-2xl font-bold hover:text-gray-500">Loading...</h1>
-                        </div>
-                    </div>
-                </Container>
-            </div>
-        );
-    }
-
-    if (!isLoggedIn) {
-        return (
-            <div className="w-full py-8 mt-4 text-center min-h-screen">
-                <Container>
-                    <div className="flex flex-wrap">
-                        <div className="p-2 w-full h-full">
-                            <h1 className="text-2xl font-bold hover:text-blue-100 text-yellow-400" style={{ textShadow: '0 0 2px #000' }}>
-                                Your Own Personal Blogging Platform<br />
-                            </h1>
-                            <h2 className='mt-10 font-bold'> <span className='font-extrabold text-xl text-sky-200 mr-2' style={{ textShadow: '0 0 2px #000' }}>Blogslog</span>
-                            is a platform where you can share your thoughts and ideas with the world.
-                            </h2>
-                            <div className="inline-block border-2 border-yellow-400 bg-sky-900 rounded-md p-4 shadow-md mt-20">
-                                <h2 className="text-lg">Login or Signup to view and create posts.</h2>
-                            </div>
-                        </div>
-                    </div>
-                </Container>
-            </div>
-        );
-    }
-
-    if (posts.length === 0) {
-        return (
-            <div className="w-full py-8 mt-4 text-center min-h-screen">
-                <Container>
-                    <div className="flex flex-wrap">
-                        <div className="p-2 w-full h-full">
-                            <h1 className="text-2xl font-bold hover:text-gray-500">No posts available</h1>
-                        </div>
-                    </div>
-                </Container>
-            </div>
-        );
-    }
+    };
 
     return (
-        <div className="w-full py-8">
+        
+        <div className="w-full my-20 md:py-8 text-center md:min-h-auto">
             <Container>
-                <div className="flex flex-wrap">
-                    {posts.map((post) => (
-                        <div key={post.$id} className="p-2 w-1/4">
-                            <PostCard {...post} />
+                <div className="flex flex-col gap-20 my-20 md:my-14 items-center justify-around">
+
+                    <div className='flex flex-col items-center md:items-start'>
+                        <h1 className='text-[52px] md:text-[52px] lg:text-[72px] hero-heading mx-auto'>
+                            Welcome to the <span className='text-customYellow'>BlogSlog!</span>
+                        </h1>
+                        <p className='md:text-lg text-sm lg:px-5 px-10 md:px-0 mx-auto'>
+                            <TextGenerateEffect words={welcomeMessage} />
+                        </p>
+                        <div className="mx-auto">
+                            <Button
+                                onClick={() => navigateHome()}
+                                className="my-7 md:py-2 py-0 px-5 text-white font-weight-400 bg-customYellow rounded-xl shadow-lg duration-200 hover:cursor-pointer hover:bg-white hover:text-black hover:scale-105 md:mx-2 md:my-6"
+                            >
+                                {status ? "See Posts" : "Get Started"}
+                            </Button>
                         </div>
-                    ))}
+                    </div>
                 </div>
             </Container>
         </div>
